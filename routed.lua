@@ -106,7 +106,9 @@ function listen_for_lan_announce()
 end	 
 	
 		
-		
+init()
+parallel.waitForAny(route_lan_to_wan, route_wan_to_lan, listen_for_lan_announce)
+print("If you see this, something has gone terribly wrong.")
 	
  
 	
