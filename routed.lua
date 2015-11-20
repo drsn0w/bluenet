@@ -44,7 +44,7 @@ function lan_add_route(route)
 	if lan_check_route_exists(route) then
 		print(route .. " is already a registered route! Dropping request.")
 	else
-		lan_routing_table.insert(route)
+		table.insert(lan_routing_table, route)
 		print(route .. " registered as route!")
 	end
 end
