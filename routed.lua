@@ -20,9 +20,11 @@ function init()
 	wan_modem.open(6050)
 	print("Listening for WAN packets on 6050...")
 	
-	-- setup LAN listener
+	-- setup LAN listeners
 	lan_modem.open(6010)
 	print("Listening for LAN packets on 6010...")
+	lan_modem.open(6011)
+	print("Listening for LAN host announcements on 6011...")
 	
 	-- initialize routing table(s)
 	lan_routing_table = {}
