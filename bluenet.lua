@@ -2,7 +2,7 @@
 -- Copyright 2015 Liam Crabbe
 
 -- interpret command line arguments. these can be added to at a later date if more userspace functions are needed
-function interpret_arguments() {
+function interpret_arguments() 
 	local command = arg[1]
 	
 	if parse_1 == "announce" then
@@ -10,7 +10,7 @@ function interpret_arguments() {
 	else
 		print("usage: bluenet announce <modem side>")
 	end
-}
+end
 
 -- announce host on the network
 function host_announce()
