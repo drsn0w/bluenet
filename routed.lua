@@ -66,15 +66,15 @@ end
 -- listen for and route data packets from LAN 
 function route_lan_to_wan()
 	while true do
-		local event, m_side, on_chan, dest_dev, message, _ = os.pullEvent("modem_message")
+		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
 		if m_side == LAN_INTERFACE and on_chan == 6010 then
-			local destination, source, message = deserialize_and_disassemble(message)
+			local destination, source, message = deserialize_and_disassemble(data)
 			if lan_check_route_exists(destination) then
 				print("Routing packet from LAN " .. source .. " to LAN " .. destination)
-				lan_modem.transmit(destination, 6010, message)
+				lan_modem.transmit(destination, 6010, data)
 			else
 				print("Routing packet from LAN " .. source .. " to WAN " .. destination)
-				wan_modem.transmit(6050, 6050, message)
+				wan_modem.transmit(6050, 6050, data)
 			end
 		end
 	end
@@ -83,12 +83,12 @@ end
 -- listen for and route data packets from WAN
 function route_wan_to_lan()
 	while true do
-		local event, m_side, on_chan, dest_dev, message, _ = os.pullEvent("modem_message")
+		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
 		if m_side == WAN_INTERFACE and on_chan == 6050 then
-			local destination, source, message = deserialize_and_disassemble(message)
+			local destination, source, message = deserialize_and_disassemble(data)
 			if lan_check_route_exists(destination) then
 				print("Routing packet from WAN " .. source .. " to LAN " .. destination)
-				lan_modem.transmit(destination, 6010, message)
+				lan_modem.transmit(destination, 6010, data)
 			end
 		end
 	end
@@ -97,9 +97,9 @@ end
 -- listen for LAN host announcements
 function listen_for_lan_announce()
 	while true do
-		local event, m_side, on_chan, dest_dev, message, _ = os.pullEvent("modem_message")
+		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
 		if m_side == LAN_INTERFACE and on_chan == 6011 then
-			local destination, source, message = deserialize_and_disassemble(message)
+			local destination, source, message = deserialize_and_disassemble(data)
 			if message == "ANNOUNCE HOST UP" then
 				lan_add_route(source)
 			end
