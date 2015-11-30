@@ -48,7 +48,7 @@ function send(recipient_id, message_to_send)
 	blue_modem.transmit(lan_packet_channel, local_id, data_table)
 end
 
-function recieve()
+function receive()
 	if bluenet_open == false then
 		print("[bluenet] bluenet is not open!")
 		return
