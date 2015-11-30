@@ -31,6 +31,7 @@ function open(modem_side)
 	end
 	blue_modem = peripheral.wrap(modem_side)
 	blue_modem.open(local_id)
+	bluenet_open = true
 end
 
 function close(modem_side)
@@ -39,6 +40,7 @@ function close(modem_side)
 		return
 	end
 	blue_modem.close(local_id)
+	bluenet_open = false
 end
 
 function send(recipient_id, message_to_send)
