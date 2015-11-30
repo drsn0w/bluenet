@@ -43,7 +43,7 @@ end
 
 function send(recipient_id, message_to_send)
 	local data_table = assemble_and_serialize(recipient_id, local_id, message_to_send)
-	modem.transmit(lan_packet_channel, local_id, data_table)
+	blue_modem.transmit(lan_packet_channel, local_id, data_table)
 end
 
 function recieve()
