@@ -25,10 +25,10 @@ local function assemble_and_serialize(destination_address, source_address, messa
 end
 
 local function announce_host(modem)
-	packet = {6011, my_id, "bluenet_announce host_up"}
+	packet = {6011, local_id, "bluenet_announce host_up"}
 	data = textutils.serialize(packet)
 
-	modem.transmit(6011, my_id, data)
+	modem.transmit(6011, local_id, data)
 end
 
 function open(modem_side)
@@ -38,7 +38,7 @@ function open(modem_side)
 	end
 	blue_modem = peripheral.wrap(modem_side)
 	blue_modem.open(local_id)
-	announce_host(modem)
+	announce_host(blue_modem)
 	bluenet_open = true
 end
 
