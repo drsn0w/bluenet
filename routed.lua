@@ -1,4 +1,4 @@
--- bluenet routed 
+-- bluenet routed
 -- Copyright 2015 Liam Crabbe and Shawn Anastasio
 
 -- setup constants
@@ -8,43 +8,42 @@ MY_ID = os.getComputerID()
 
 function init()
 	print("bluenet routed starting...")
-	
+
 	-- initialize and wrap modem devices
 	print("Initializing modems...")
 	print("LAN: " .. LAN_INTERFACE)
 	lan_modem = peripheral.wrap(LAN_INTERFACE)
 	print("WAN: " .. WAN_INTERFACE)
 	wan_modem = peripheral.wrap(WAN_INTERFACE)
-	
+
 	-- setup WAN listener
 	wan_modem.open(6050)
 	print("Listening for WAN packets on 6050...")
-	
+
 	-- setup LAN listeners
 	lan_modem.open(6010)
 	print("Listening for LAN packets on 6010...")
 	lan_modem.open(6011)
 	print("Listening for LAN host announcements on 6011...")
-	
-	-- initialize routing table(s)
-	lan_routing_table = {}
-	wan_routing_table = nil
+
+	-- initialize routing table()
+	lan_host_list = {}
 end
 
 -- check if a host exists in the LAN routing table
-function lan_check_route_exists(route)
-	for key, value in pairs(lan_routing_table) do
+function lan_check_host_exists(route)
+	for key, value in pairs(lan_host_list) do
 		if value == route then return true end
 	end
 	return false
 end
 
 -- add a host to the LAN routing table
-function lan_add_route(route)
-	if lan_check_route_exists(route) then
+function add_lan_host(route)
+	if lan_check_host_exists(route) then
 		print(route .. " is already a registered route! Dropping request.")
 	else
-		table.insert(lan_routing_table, route)
+		table.insert(lan_host_list, route)
 		print(route .. " registered as route!")
 	end
 end
@@ -63,7 +62,7 @@ function assemble_and_serialize(destination_address, source_address, message)
 	return serialized_table
 end
 
--- listen for and route data packets from LAN 
+-- listen for and route data packets from LAN
 function route_lan_to_wan()
 	while true do
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
@@ -79,7 +78,7 @@ function route_lan_to_wan()
 		end
 	end
 end
-			
+
 -- listen for and route data packets from WAN
 function route_wan_to_lan()
 	while true do
@@ -100,17 +99,14 @@ function listen_for_lan_announce()
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
 		if m_side == LAN_INTERFACE and on_chan == 6011 then
 			local destination, source, message = deserialize_and_disassemble(data)
-			if message == "ANNOUNCE HOST UP" then
-				lan_add_route(source)
+			if message == "bluenet_announce host_up" then
+				add_lan_host(source)
 			end
 		end
 	end
-end	 
-	
-		
+end
+
+
 init()
 parallel.waitForAny(route_lan_to_wan, route_wan_to_lan, listen_for_lan_announce)
 print("If you see this, something has gone terribly wrong.")
-	
- 
-	

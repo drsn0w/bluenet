@@ -24,6 +24,13 @@ local function assemble_and_serialize(destination_address, source_address, messa
 	return serialized_table
 end
 
+local function announce_host(modem)
+	packet = {6011, my_id, "bluenet_announce host_up"}
+	data = textutils.serialize(packet)
+
+	modem.transmit(6011, my_id, data)
+end
+
 function open(modem_side)
 	if bluenet_open == true then
 		print("[bluenet] bluenet is already open!")
@@ -31,6 +38,7 @@ function open(modem_side)
 	end
 	blue_modem = peripheral.wrap(modem_side)
 	blue_modem.open(local_id)
+	announce_host(modem)
 	bluenet_open = true
 end
 
