@@ -68,7 +68,7 @@ function route_lan_to_wan()
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
 		if m_side == LAN_INTERFACE and on_chan == 6010 then
 			local destination, source, message = deserialize_and_disassemble(data)
-			if lan_check_route_exists(destination) then
+			if lan_check_host_exists(destination) then
 				print("Routing packet from LAN " .. source .. " to LAN " .. destination)
 				lan_modem.transmit(destination, 6010, data)
 			else
