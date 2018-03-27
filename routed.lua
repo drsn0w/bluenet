@@ -26,7 +26,7 @@ function init()
 	lan_modem.open(6011)
 	print("Listening for LAN host announcements on 6011...")
 
-	-- initialize routing table()
+	-- initialize routing table
 	lan_host_list = {}
 end
 
@@ -85,7 +85,7 @@ function route_wan_to_lan()
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
 		if m_side == WAN_INTERFACE and on_chan == 6050 then
 			local destination, source, message = deserialize_and_disassemble(data)
-			if lan_check_route_exists(destination) then
+			if lan_check_host_exists(destination) then
 				print("Routing packet from WAN " .. source .. " to LAN " .. destination)
 				lan_modem.transmit(destination, 6010, data)
 			end
