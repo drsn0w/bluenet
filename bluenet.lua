@@ -3,7 +3,7 @@
 -- Copyright 2015 Liam Crabbe and Shawn Anastasio
 
 -- Include protocol library
-dofile("protocol.lua")
+dofile("bluenet/protocol.lua")
 
 local blue_modem = nil
 local bluenet_open = false

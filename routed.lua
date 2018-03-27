@@ -2,7 +2,7 @@
 -- Copyright 2015 Liam Crabbe and Shawn Anastasio
 
 -- Include protocol library
-dofile("protocol.lua")
+dofile("bluenet/protocol.lua")
 
 -- configuration
 WAN_INTERFACE = "left"
@@ -23,13 +23,13 @@ function init()
 
 	-- setup WAN listener
 	wan_modem.open(WAN_DATA_CHANNEL)
-	print("Listening for WAN packets on WAN_DATA_CHANNEL...")
+	print("Listening for WAN packets on" .. WAN_DATA_CHANNEL)
 
 	-- setup LAN listeners
 	lan_modem.open(LAN_DATA_CHANNEL)
-	print("Listening for LAN packets on LAN_DATA_CHANNEL...")
+	print("Listening for LAN packets on" .. LAN_DATA_CHANNEL)
 	lan_modem.open(LAN_ANNOUNCEMENT_CHANNEL)
-	print("Listening for LAN host announcements on LAN_ANNOUNCEMENT_CHANNEL...")
+	print("Listening for LAN host announcements on " .. LAN_ANNOUNCEMENT_CHANNEL)
 
 	-- initialize routing table
 	lan_host_list = {}
