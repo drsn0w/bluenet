@@ -2,10 +2,13 @@
 -- Written by drsn0w
 -- Copyright 2015 Liam Crabbe and Shawn Anastasio
 
+-- Include protocol library
+dofile("protocol.lua")
+
 local blue_modem = nil
 local bluenet_open = false
 local local_id = os.getComputerID()
-local lan_packet_channel = 6010
+local LAN_DATA_CHANNEL = 6010
 
 
 -- deserialize and disassemble bluenet packet table
@@ -53,7 +56,7 @@ end
 
 function send(recipient_id, message_to_send)
 	local data_table = assemble_and_serialize(recipient_id, local_id, message_to_send)
-	blue_modem.transmit(lan_packet_channel, local_id, data_table)
+	blue_modem.transmit(LAN_DATA_CHANNEL, local_id, data_table)
 end
 
 function receive()

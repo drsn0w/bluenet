@@ -1,9 +1,14 @@
 -- bluenet routed
 -- Copyright 2015 Liam Crabbe and Shawn Anastasio
 
--- setup constants
+-- Include protocol library
+dofile("protocol.lua")
+
+-- configuration
 WAN_INTERFACE = "left"
 LAN_INTERFACE = "right"
+
+-- runtime constants
 MY_ID = os.getComputerID()
 
 function init()
@@ -17,14 +22,14 @@ function init()
 	wan_modem = peripheral.wrap(WAN_INTERFACE)
 
 	-- setup WAN listener
-	wan_modem.open(6050)
-	print("Listening for WAN packets on 6050...")
+	wan_modem.open(WAN_DATA_CHANNEL)
+	print("Listening for WAN packets on WAN_DATA_CHANNEL...")
 
 	-- setup LAN listeners
-	lan_modem.open(6010)
-	print("Listening for LAN packets on 6010...")
-	lan_modem.open(6011)
-	print("Listening for LAN host announcements on 6011...")
+	lan_modem.open(LAN_DATA_CHANNEL)
+	print("Listening for LAN packets on LAN_DATA_CHANNEL...")
+	lan_modem.open(LAN_ANNOUNCEMENT_CHANNEL)
+	print("Listening for LAN host announcements on LAN_ANNOUNCEMENT_CHANNEL...")
 
 	-- initialize routing table
 	lan_host_list = {}
@@ -66,14 +71,14 @@ end
 function route_lan_to_wan()
 	while true do
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
-		if m_side == LAN_INTERFACE and on_chan == 6010 then
+		if m_side == LAN_INTERFACE and on_chan == LAN_DATA_CHANNEL then
 			local destination, source, message = deserialize_and_disassemble(data)
 			if lan_check_host_exists(destination) then
 				print("Routing packet from LAN " .. source .. " to LAN " .. destination)
-				lan_modem.transmit(destination, 6010, data)
+				lan_modem.transmit(destination, LAN_DATA_CHANNEL, data)
 			else
 				print("Routing packet from LAN " .. source .. " to WAN " .. destination)
-				wan_modem.transmit(6050, 6050, data)
+				wan_modem.transmit(WAN_DATA_CHANNEL, WAN_DATA_CHANNEL, data)
 			end
 		end
 	end
@@ -83,11 +88,11 @@ end
 function route_wan_to_lan()
 	while true do
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
-		if m_side == WAN_INTERFACE and on_chan == 6050 then
+		if m_side == WAN_INTERFACE and on_chan == WAN_DATA_CHANNEL then
 			local destination, source, message = deserialize_and_disassemble(data)
 			if lan_check_host_exists(destination) then
 				print("Routing packet from WAN " .. source .. " to LAN " .. destination)
-				lan_modem.transmit(destination, 6010, data)
+				lan_modem.transmit(destination, LAN_DATA_CHANNEL, data)
 			end
 		end
 	end
@@ -97,7 +102,7 @@ end
 function listen_for_lan_announce()
 	while true do
 		local event, m_side, on_chan, dest_dev, data, _ = os.pullEvent("modem_message")
-		if m_side == LAN_INTERFACE and on_chan == 6011 then
+		if m_side == LAN_INTERFACE and on_chan == LAN_ANNOUNCEMENT_CHANNEL then
 			local destination, source, message = deserialize_and_disassemble(data)
 			if message == "bluenet_announce host_up" then
 				add_lan_host(source)
