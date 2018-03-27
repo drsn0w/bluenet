@@ -4,10 +4,24 @@
 -- Licensed under the terms of the GNU GPL v3 license
 
 -- Channel for all LAN data traffic
-LAN_DATA_CHANNEL = 6010
+local LAN_DATA_CHANNEL = 6010
 
 -- Channel for all LAN announcement traffic
-LAN_ANNOUNCEMENT_CHANNEL = 6011
+local LAN_ANNOUNCEMENT_CHANNEL = 6011
 
 -- Channel for all WAN announcement traffic
-WAN_DATA_CHANNEL = 6050
+local WAN_DATA_CHANNEL = 6050
+
+-- deserialize and disassemble bluenet packet table
+-- returns as destination_address, source_address, message
+local function deserialize_and_disassemble(data)
+	local data_table = textutils.unserialize(data)
+	return data_table[1], data_table[2], data_table[3]
+end
+
+-- assembles and serializes bluenet packet table
+local function assemble_and_serialize(destination_address, source_address, message)
+	local data_table = {destination_address, source_address, message}
+	local serialized_table = textutils.serialize(data_table)
+	return serialized_table
+end

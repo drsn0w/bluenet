@@ -8,24 +8,6 @@ dofile("bluenet/protocol.lua")
 local blue_modem = nil
 local bluenet_open = false
 local local_id = os.getComputerID()
-local LAN_DATA_CHANNEL = 6010
-
-
--- deserialize and disassemble bluenet packet table
--- returns as destination_address, source_address, message
--- copied from routed
-local function deserialize_and_disassemble(data)
-	local data_table = textutils.unserialize(data)
-	return data_table[1], data_table[2], data_table[3]
-end
-
--- assembles and serializes bluenet packet table
--- copied from routed
-local function assemble_and_serialize(destination_address, source_address, message)
-	local data_table = {destination_address, source_address, message}
-	local serialized_table = textutils.serialize(data_table)
-	return serialized_table
-end
 
 local function announce_host(modem)
 	packet = {6011, local_id, "bluenet_announce host_up"}

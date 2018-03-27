@@ -23,11 +23,11 @@ function init()
 
 	-- setup WAN listener
 	wan_modem.open(WAN_DATA_CHANNEL)
-	print("Listening for WAN packets on" .. WAN_DATA_CHANNEL)
+	print("Listening for WAN packets on " .. WAN_DATA_CHANNEL)
 
 	-- setup LAN listeners
 	lan_modem.open(LAN_DATA_CHANNEL)
-	print("Listening for LAN packets on" .. LAN_DATA_CHANNEL)
+	print("Listening for LAN packets on " .. LAN_DATA_CHANNEL)
 	lan_modem.open(LAN_ANNOUNCEMENT_CHANNEL)
 	print("Listening for LAN host announcements on " .. LAN_ANNOUNCEMENT_CHANNEL)
 
@@ -51,20 +51,6 @@ function add_lan_host(route)
 		table.insert(lan_host_list, route)
 		print(route .. " registered as route!")
 	end
-end
-
--- deserialize and disassemble bluenet packet table
--- returns as destination_address, source_address, message
-function deserialize_and_disassemble(data)
-	local data_table = textutils.unserialize(data)
-	return data_table[1], data_table[2], data_table[3]
-end
-
--- assembles and serializes bluenet packet table
-function assemble_and_serialize(destination_address, source_address, message)
-	local data_table = {destination_address, source_address, message}
-	local serialized_table = textutils.serialize(data_table)
-	return serialized_table
 end
 
 -- listen for and route data packets from LAN
